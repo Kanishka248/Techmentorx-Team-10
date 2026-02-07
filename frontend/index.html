@@ -6,32 +6,16 @@
 <title>HelpRoute — Auth</title>
 
 <style>
-body{
-cursor: default;
-}
-
-button,a,.role{
-cursor:pointer;
-}
-
-input{
-cursor:text;
-}
-
 :root{
 --bg:#E1F0DA;
 --accent:#9cc589;
---card-highlight:#d2ee91;
+--card-highlight:#35a02d00;
 --btn:#427A43;
---btn-hover:#b8e28b;
+--btn-hover:#5b944f;
 --text:#333333;
---white:#ddf2c8;
+--white:#d3e6cdf7;
 --shadow:rgba(31,41,55,0.08);
 }
-body{
-cursor:url("cursor.png"), auto;
-}
-
 
 *{box-sizing:border-box}
 html,body{height:100%}
@@ -45,47 +29,86 @@ display:flex;
 align-items:center;
 justify-content:center;
 padding:24px;
+cursor:default;
 }
 
-.wrapper{width:100%;max-width:620px;padding:16px}
+button,a,.role{cursor:pointer}
+input{cursor:text}
+
+.wrapper{
+width:100%;
+max-width:600px;   /* increase width */
+padding:16px;
+}
+
 
 .card{
 background:var(--white);
-border:2px solid var(--card-highlight);
-border-radius:16px;
-box-shadow:0 12px 30px var(--shadow);
-padding:28px;
+border-radius:18px;
+
+/* ADD THIS LINE */
+border:2px solid rgba(63,125,60,.25);
+
+
+box-shadow:0 15px 40px rgba(0,0,0,.08);
+padding:48px 40px;
+text-align:center;
 }
 
-header{text-align:center;margin-bottom:18px}
 
-.brand{
-font-size:34px;
-font-weight:800;
-margin:0;
-letter-spacing:.5px;
-text-shadow:0 2px 8px rgba(0,0,0,.08);
+/* ===== PREMIUM TITLE ===== */
+.fancy-title{
+font-size:42px;
+font-weight:900;
+letter-spacing:1px;
+margin:0 0 6px 0;
+background:linear-gradient(90deg,#427A43,#7fbf7a);
+background-clip:text;
+
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+text-shadow:0 4px 12px rgba(66,122,67,.35);
+position:relative;
+display:inline-block;
+padding-bottom:6px;
 }
 
-.help{color:#608d5f}
-.route{color:#333}
-
-.tag{font-size:13px;color:rgba(51,51,51,.7)}
-
-.switches{
-display:flex;
-flex-direction:column;
-gap:6px;
-align-items:center;
-margin-top:8px
+.fancy-title::after{
+content:"";
+position:absolute;
+left:10%;
+bottom:0;
+width:80%;
+height:3px;
+background:#427A43;
+border-radius:4px;
 }
 
-.switches a{color:#548453;text-decoration:none;font-weight:600}
+.fancy-title:hover{
+transform:scale(1.04);
+transition:.2s ease;
+}
+/* ========================= */
+
+.tag{
+font-size:13px;
+color:#555;
+margin-bottom:12px;
+}
+
+.switches a{
+display:block;
+color:#427A43;
+font-weight:600;
+text-decoration:none;
+margin:4px 0;
+}
 
 .forms{position:relative;min-height:320px}
 
 form{
-position:absolute;inset:0;
+position:absolute;
+inset:0;
 display:flex;
 flex-direction:column;
 gap:12px;
@@ -95,15 +118,17 @@ transition:.3s;
 .hidden{opacity:0;pointer-events:none;transform:translateY(8px)}
 
 input{
-padding:12px;
+padding:14px;
 border-radius:10px;
-border:1px solid #dfe7d8;
-outline:none
+border:1px solid #ddd;
+outline:none;
 }
 
-input:focus{box-shadow:0 0 0 6px rgba(221,246,210,.6)}
+input:focus{
+box-shadow:0 0 0 4px rgba(66,122,67,.2);
+}
 
-.roles{display:flex;gap:10px}
+.roles{display:flex;gap:10px;margin-top:8px}
 
 .role{
 flex:1;
@@ -111,23 +136,33 @@ padding:10px;
 border-radius:10px;
 border:1px solid #ddd;
 background:#fff;
-cursor:pointer
+font-weight:600;
 }
 
-.role[aria-pressed="true"]{background:var(--btn);color:#fff}
+.role[aria-pressed="true"]{
+background:var(--btn);
+color:#fff;
+border-color:transparent;
+}
 
 .btn-primary{
 background:var(--btn);
 border:0;
-padding:12px;
+padding:14px;
 border-radius:10px;
 font-weight:700;
-cursor:pointer
+color:white;
+margin-top:6px;
 }
 
 .btn-primary:hover{background:var(--btn-hover)}
 
-footer{text-align:center;margin-top:16px;font-size:13px;color:#666}
+footer{
+text-align:center;
+margin-top:18px;
+font-size:12px;
+color:#777;
+}
 </style>
 </head>
 
@@ -136,10 +171,7 @@ footer{text-align:center;margin-top:16px;font-size:13px;color:#666}
 <div class="wrapper">
 <section class="card">
 
-<header>
-<h1 class="brand">
-<span class="help">Help</span><span class="route">Route</span>
-</h1>
+<h1 class="fancy-title">HelpRoute</h1>
 
 <div class="tag">Connecting donors, volunteers & communities</div>
 
@@ -147,7 +179,6 @@ footer{text-align:center;margin-top:16px;font-size:13px;color:#666}
 <a id="toSignup" href="#">New user? Sign up</a>
 <a id="toLogin" href="#">Already have an account? Login</a>
 </div>
-</header>
 
 <div class="forms">
 
@@ -165,7 +196,6 @@ footer{text-align:center;margin-top:16px;font-size:13px;color:#666}
 </form>
 
 <form id="signupForm" class="hidden">
-
 <input id="signupName" placeholder="Full Name">
 <input id="signupEmail" placeholder="Email">
 <input id="signupPass" type="password" placeholder="Password">
@@ -195,18 +225,19 @@ toLogin.onclick=()=>{loginForm.classList.remove("hidden");signupForm.classList.a
 
 document.querySelectorAll(".roles").forEach(r=>{
 r.querySelectorAll(".role").forEach(b=>{
-b.onclick=()=>{r.querySelectorAll(".role").forEach(x=>x.setAttribute("aria-pressed","false"));b.setAttribute("aria-pressed","true")}
+b.onclick=()=>{
+r.querySelectorAll(".role").forEach(x=>x.setAttribute("aria-pressed","false"));
+b.setAttribute("aria-pressed","true");
+}
 })
 })
 
 loginBtn.onclick=()=>{
-const role=loginForm.querySelector("[aria-pressed='true']").dataset.role;
-location.href=role+".html";
+location.href=loginForm.querySelector("[aria-pressed='true']").dataset.role+".html";
 }
 
 signupBtn.onclick=()=>{
-const role=signupForm.querySelector("[aria-pressed='true']").dataset.role;
-location.href=role+".html";
+location.href=signupForm.querySelector("[aria-pressed='true']").dataset.role+".html";
 }
 </script>
 
