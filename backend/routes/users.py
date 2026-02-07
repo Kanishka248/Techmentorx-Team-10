@@ -2,7 +2,8 @@
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, EmailStr
-from passlib.context import CryptContext
+import hashlib
+import secrets
 
 from ..database import get_connection
 
@@ -10,8 +11,6 @@ router = APIRouter(
     prefix="/users",
     tags=["Users"]
 )
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def get_db():
@@ -26,10 +25,11 @@ def get_db():
 # ------------------------
 
 def hash_password(password: str):
-    return pwd_context.hash(password)
+    # Simple hash for demo - in production use proper bcrypt
+    return hashlib.sha256(password.encode()).hexdigest()
 
 def verify_password(plain_password, hashed_password):
-    return pwd_context.verify(plain_password, hashed_password)
+    return hash_password(plain_password) == hashed_password
 
 # ------------------------
 # Schemas
@@ -54,7 +54,7 @@ class UserResponse(BaseModel):
     points: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # ------------------------
 # Routes
@@ -69,10 +69,12 @@ def signup(user: SignupRequest, db=Depends(get_db)):
         raise HTTPException(status_code=400, detail="Email already registered")
 
     hashed = hash_password(user.password)
+    role = user.role.capitalize()  # Convert to proper case
+    
     # your users table requires contact and location; insert empty strings for now
     cursor.execute(
         "INSERT INTO users (name, contact, location, role, email, password, points) VALUES (?,?,?,?,?,?,?)",
-        (user.name, "", "", user.role, user.email, hashed, 0),
+        (user.name, "", "", role, user.email, hashed, 0),
     )
     db.commit()
     user_id = cursor.lastrowid
@@ -85,9 +87,11 @@ def signup(user: SignupRequest, db=Depends(get_db)):
 @router.post("/login")
 def login(user: LoginRequest, db=Depends(get_db)):
     cursor = db.cursor()
+    role = user.role.capitalize()  # Convert to proper case
+    
     cursor.execute(
         "SELECT id, name, email, password, role, points FROM users WHERE email = ? AND role = ?",
-        (user.email, user.role),
+        (user.email, role),
     )
     row = cursor.fetchone()
     if not row:

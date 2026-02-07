@@ -85,20 +85,24 @@ margin-top:8px
 .forms{position:relative;min-height:320px}
 
 form{
-position:absolute;inset:0;
+position:relative;
 display:flex;
 flex-direction:column;
 gap:12px;
 transition:.3s;
 }
 
-.hidden{opacity:0;pointer-events:none;transform:translateY(8px)}
+.hidden{opacity:0;pointer-events:none;position:absolute;inset:0;transform:translateY(8px)}
 
 input{
 padding:12px;
 border-radius:10px;
 border:1px solid #dfe7d8;
-outline:none
+outline:none;
+background:#fff;
+font-size:16px;
+font-family:Inter,system-ui;
+width:100%
 }
 
 input:focus{box-shadow:0 0 0 6px rgba(221,246,210,.6)}
@@ -199,14 +203,63 @@ b.onclick=()=>{r.querySelectorAll(".role").forEach(x=>x.setAttribute("aria-press
 })
 })
 
-loginBtn.onclick=()=>{
+loginBtn.onclick=async()=>{
+const email=loginEmail.value.trim();
+const password=loginPass.value.trim();
 const role=loginForm.querySelector("[aria-pressed='true']").dataset.role;
-location.href=role+".html";
+
+if(!email||!password){alert("Please fill all fields");return}
+
+try{
+const res=await fetch("/users/login",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({email,password,role})
+});
+
+const data=await res.json();
+
+if(res.ok){
+localStorage.setItem("user",JSON.stringify(data.user));
+localStorage.setItem("token",data.user.id);
+window.location.href="/"+role.toLowerCase()+".html";
+}else{
+alert(data.detail||"Login failed");
+}
+}catch(e){
+alert("Error: "+e.message+". Make sure backend is running on port 8000");
+}
 }
 
-signupBtn.onclick=()=>{
+signupBtn.onclick=async()=>{
+const name=signupName.value.trim();
+const email=signupEmail.value.trim();
+const password=signupPass.value.trim();
+const password2=signupPass2.value.trim();
 const role=signupForm.querySelector("[aria-pressed='true']").dataset.role;
-location.href=role+".html";
+
+if(!name||!email||!password||!password2){alert("Please fill all fields");return}
+if(password!==password2){alert("Passwords don't match");return}
+
+try{
+const res=await fetch("/users/signup",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({name,email,password,role})
+});
+
+const data=await res.json();
+
+if(res.ok){
+localStorage.setItem("user",JSON.stringify(data));
+localStorage.setItem("token",data.id);
+window.location.href="/"+role.toLowerCase()+".html";
+}else{
+alert(data.detail||"Signup failed");
+}
+}catch(e){
+alert("Error: "+e.message+". Make sure backend is running on port 8000");
+}
 }
 </script>
 

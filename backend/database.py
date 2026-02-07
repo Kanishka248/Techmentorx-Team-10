@@ -1,11 +1,14 @@
 import sqlite3
 
-# Connect to the database
+# =======================
+# Database Connection
+# =======================
 def get_connection():
-    conn = sqlite3.connect("social_mentor.db")
-    return conn
+    return sqlite3.connect("social_mentor.db")
 
-# Create all tables
+# =======================
+# Create All Tables
+# =======================
 def create_tables():
     conn = get_connection()
     cursor = conn.cursor()
@@ -19,7 +22,7 @@ def create_tables():
         name TEXT NOT NULL,
         contact TEXT NOT NULL,
         location TEXT NOT NULL,
-        role TEXT NOT NULL CHECK(role IN ('Donor', 'Volunteer', 'Admin')),
+        role TEXT NOT NULL CHECK(role IN ('Donor', 'Volunteer', 'Admin', 'Mentor')),
         email TEXT UNIQUE NOT NULL,
         password TEXT NOT NULL,
         points INTEGER DEFAULT 0
@@ -37,7 +40,8 @@ def create_tables():
         quantity INTEGER NOT NULL,
         location TEXT NOT NULL,
         description TEXT,
-        status TEXT NOT NULL CHECK(status IN ('Available', 'Picked up', 'Delivered', 'Received')) DEFAULT 'Available',
+        status TEXT NOT NULL CHECK(status IN ('Available', 'Picked up', 'Delivered', 'Received'))
+            DEFAULT 'Available',
         volunteer_id INTEGER,
         FOREIGN KEY(donor_id) REFERENCES users(id),
         FOREIGN KEY(volunteer_id) REFERENCES users(id)
@@ -52,7 +56,8 @@ def create_tables():
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         volunteer_id INTEGER NOT NULL,
         donation_id INTEGER NOT NULL,
-        task_status TEXT NOT NULL CHECK(task_status IN ('Assigned', 'Picked up', 'Delivered')) DEFAULT 'Assigned',
+        task_status TEXT NOT NULL CHECK(task_status IN ('Assigned', 'Picked up', 'Delivered'))
+            DEFAULT 'Assigned',
         assigned_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         picked_up_at DATETIME,
         delivered_at DATETIME,
@@ -93,7 +98,10 @@ def create_tables():
 
     conn.commit()
     conn.close()
-    print("All tables created successfully!")
+    print("✅ All tables created successfully!")
 
+# =======================
+# Run Directly
+# =======================
 if __name__ == "__main__":
     create_tables()
